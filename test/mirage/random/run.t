@@ -116,30 +116,30 @@ Configure the project for Unix:
   # 94 "mirage/main.ml"
   
   let printexc__3 = lazy (
-    let _backtrace = backtrace__key () in
+    let _backtrace = (backtrace__key ()) in
   # 396 "lib/mirage.ml"
     return (Printexc.record_backtrace _backtrace)
   );;
   # 101 "mirage/main.ml"
   
   let hashtbl__4 = lazy (
-    let _randomize_hashtables = randomize_hashtables__key () in
+    let _randomize_hashtables = (randomize_hashtables__key ()) in
   # 405 "lib/mirage.ml"
     return (if _randomize_hashtables then Hashtbl.randomize ())
   );;
   # 108 "mirage/main.ml"
   
   let gc__5 = lazy (
-    let _allocation_policy = allocation_policy__key () in
-    let _minor_heap_size = minor_heap_size__key () in
-    let _major_heap_increment = major_heap_increment__key () in
-    let _space_overhead = space_overhead__key () in
-    let _max_space_overhead = max_space_overhead__key () in
-    let _gc_verbosity = gc_verbosity__key () in
-    let _gc_window_size = gc_window_size__key () in
-    let _custom_major_ratio = custom_major_ratio__key () in
-    let _custom_minor_ratio = custom_minor_ratio__key () in
-    let _custom_minor_max_size = custom_minor_max_size__key () in
+    let _allocation_policy = (allocation_policy__key ()) in
+    let _minor_heap_size = (minor_heap_size__key ()) in
+    let _major_heap_increment = (major_heap_increment__key ()) in
+    let _space_overhead = (space_overhead__key ()) in
+    let _max_space_overhead = (max_space_overhead__key ()) in
+    let _gc_verbosity = (gc_verbosity__key ()) in
+    let _gc_window_size = (gc_window_size__key ()) in
+    let _custom_major_ratio = (custom_major_ratio__key ()) in
+    let _custom_minor_ratio = (custom_minor_ratio__key ()) in
+    let _custom_minor_max_size = (custom_minor_max_size__key ()) in
   # 457 "lib/mirage.ml"
     return (
   let open Gc in
@@ -159,7 +159,7 @@ Configure the project for Unix:
   # 137 "mirage/main.ml"
   
   let mirage_runtime__6 = lazy (
-    let _delay = delay__key () in
+    let _delay = (delay__key ()) in
   # 302 "lib/mirage.ml"
     Unix_os.Time.sleep_ns (Duration.of_sec _delay)
   );;
@@ -173,7 +173,7 @@ Configure the project for Unix:
   let mirage_logs_make__8 = lazy (
     let __pclock__7 = Lazy.force pclock__7 in
     __pclock__7 >>= fun _pclock__7 ->
-    let _logs = logs__key () in
+    let _logs = (logs__key ()) in
   # 22 "lib/devices/reporter.ml"
     let reporter = Mirage_logs_make__8.create () in
     Mirage_runtime.set_level ~default:(Some Logs.Info) _logs;
@@ -366,30 +366,30 @@ Configure the project for Xen:
   # 94 "mirage/main.ml"
   
   let printexc__3 = lazy (
-    let _backtrace = backtrace__key () in
+    let _backtrace = (backtrace__key ()) in
   # 396 "lib/mirage.ml"
     return (Printexc.record_backtrace _backtrace)
   );;
   # 101 "mirage/main.ml"
   
   let hashtbl__4 = lazy (
-    let _randomize_hashtables = randomize_hashtables__key () in
+    let _randomize_hashtables = (randomize_hashtables__key ()) in
   # 405 "lib/mirage.ml"
     return (if _randomize_hashtables then Hashtbl.randomize ())
   );;
   # 108 "mirage/main.ml"
   
   let gc__5 = lazy (
-    let _allocation_policy = allocation_policy__key () in
-    let _minor_heap_size = minor_heap_size__key () in
-    let _major_heap_increment = major_heap_increment__key () in
-    let _space_overhead = space_overhead__key () in
-    let _max_space_overhead = max_space_overhead__key () in
-    let _gc_verbosity = gc_verbosity__key () in
-    let _gc_window_size = gc_window_size__key () in
-    let _custom_major_ratio = custom_major_ratio__key () in
-    let _custom_minor_ratio = custom_minor_ratio__key () in
-    let _custom_minor_max_size = custom_minor_max_size__key () in
+    let _allocation_policy = (allocation_policy__key ()) in
+    let _minor_heap_size = (minor_heap_size__key ()) in
+    let _major_heap_increment = (major_heap_increment__key ()) in
+    let _space_overhead = (space_overhead__key ()) in
+    let _max_space_overhead = (max_space_overhead__key ()) in
+    let _gc_verbosity = (gc_verbosity__key ()) in
+    let _gc_window_size = (gc_window_size__key ()) in
+    let _custom_major_ratio = (custom_major_ratio__key ()) in
+    let _custom_minor_ratio = (custom_minor_ratio__key ()) in
+    let _custom_minor_max_size = (custom_minor_max_size__key ()) in
   # 457 "lib/mirage.ml"
     return (
   let open Gc in
@@ -409,7 +409,7 @@ Configure the project for Xen:
   # 137 "mirage/main.ml"
   
   let mirage_runtime__6 = lazy (
-    let _delay = delay__key () in
+    let _delay = (delay__key ()) in
   # 302 "lib/mirage.ml"
     Xen_os.Time.sleep_ns (Duration.of_sec _delay)
   );;
@@ -423,7 +423,7 @@ Configure the project for Xen:
   let mirage_logs_make__8 = lazy (
     let __pclock__7 = Lazy.force pclock__7 in
     __pclock__7 >>= fun _pclock__7 ->
-    let _logs = logs__key () in
+    let _logs = (logs__key ()) in
   # 22 "lib/devices/reporter.ml"
     let reporter = Mirage_logs_make__8.create () in
     Mirage_runtime.set_level ~default:(Some Logs.Info) _logs;
