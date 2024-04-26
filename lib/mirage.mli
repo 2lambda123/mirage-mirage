@@ -183,12 +183,10 @@ type reporter
 val reporter : reporter typ
 (** Implementation of the log {!type:reporter} type. *)
 
-val default_reporter :
-  ?clock:pclock impl -> ?level:Logs.level option -> unit -> reporter impl
-(** [default_reporter ?clock ?level ()] is the log reporter that prints log
-    messages to the console, timestampted with [clock]. If not provided, the
-    default clock is {!default_posix_clock}. [level] is the default log
-    threshold. It is [Some Logs.Info] if not specified. *)
+val default_reporter : ?level:Logs.level option -> unit -> reporter impl
+(** [default_reporter ?level ()] is the log reporter that prints log messages to
+    the console. [level] is the default log threshold. It is [Some Logs.Info] if
+    not specified. *)
 
 val no_reporter : reporter impl
 (** [no_reporter] disable log reporting. *)
@@ -205,8 +203,8 @@ val default_random : random impl
 (** Default PRNG device to be used in unikernels. It uses getrandom/getentropy
     on Unix, and a Fortuna PRNG on other targets. *)
 
-val rng : ?time:time impl -> ?mclock:mclock impl -> unit -> random impl
-(** [rng ()] is the device [Mirage_crypto_rng.Make]. *)
+val rng : random impl
+(** [rng] is the device [Mirage_crypto_rng_mirage]. *)
 
 (** {2 Block devices} *)
 
@@ -450,7 +448,7 @@ type arpv4
 val arpv4 : arpv4 typ
 (** Implementation of the [Arp.S] signature. *)
 
-val arp : ?time:time impl -> ethernet impl -> arpv4 impl
+val arp : ethernet impl -> arpv4 impl
 (** ARP implementation provided by the arp library *)
 
 (** {2 IP configuration}
@@ -495,8 +493,9 @@ val create_ipv4 :
   ?no_init:bool runtime_arg ->
   ?random:random impl ->
   ?clock:mclock impl ->
-  ethernet impl ->
-  arpv4 impl ->
+  ?ethif:ethernet impl ->
+  ?arp:arpv4 impl ->
+  unit ->
   ipv4 impl
 (** Use an IPv4 address Exposes the keys {!Key.V4.network} and
     {!Key.V4.gateway}. If provided, the values of these keys will override those
@@ -519,8 +518,9 @@ val create_ipv6 :
   ?group:string ->
   ?config:ipv6_config ->
   ?no_init:bool runtime_arg ->
-  network impl ->
-  ethernet impl ->
+  ?netif:network impl ->
+  ?ethif:ethernet impl ->
+  unit ->
   ipv6 impl
 (** Use an IPv6 address. Exposes the keys {!Key.V6.network}, {!Key.V6.gateway}. *)
 
@@ -529,16 +529,15 @@ val create_ipv4v6 : ?group:string -> ipv4 impl -> ipv6 impl -> ipv4v6 impl
 (** {2 UDP configuration} *)
 
 type 'a udp
-type udpv4v6 = v4v6 udp
 
 val udp : 'a udp typ
 (** Implementation of the [Tcpip.Udp.S] signature. *)
 
-val udpv4v6 : udpv4v6 typ
-val direct_udp : ?random:random impl -> 'a ip impl -> 'a udp impl
+type udpv4v6 = v4v6 udp
 
-val socket_udpv4v6 :
-  ?group:string -> Ipaddr.V4.t option -> Ipaddr.V6.t option -> udpv4v6 impl
+val udpv4v6 : udpv4v6 typ
+
+val udp_impl : ?random:random impl -> 'a ip impl -> 'a udp impl
 
 (** {2 TCP configuration} *)
 
@@ -550,15 +549,12 @@ val tcp : 'a tcp typ
 
 val tcpv4v6 : tcpv4v6 typ
 
-val direct_tcp :
+val tcp_impl :
   ?mclock:mclock impl ->
   ?time:time impl ->
   ?random:random impl ->
   'a ip impl ->
   'a tcp impl
-
-val socket_tcpv4v6 :
-  ?group:string -> Ipaddr.V4.t option -> Ipaddr.V6.t option -> tcpv4v6 impl
 
 (** {2 Network stack configuration} *)
 
@@ -570,6 +566,7 @@ val stackv4v6 : stackv4v6 typ
 (** Implementation of the [Tcpip.Stack.V4V6] signature. *)
 
 val direct_stackv4v6 :
+  [ `Socket | `Static ] Key.value ->
   ?mclock:mclock impl ->
   ?random:random impl ->
   ?time:time impl ->
@@ -584,7 +581,10 @@ val direct_stackv4v6 :
   stackv4v6 impl
 (** Direct network stack with given ip. *)
 
-val socket_stackv4v6 : ?group:string -> unit -> stackv4v6 impl
+val socket_stackv4v6 :   v4v6 impl ->
+  udpv4v6 impl 
+    -> tcpv4v6 impl
+  -> stackv4v6 impl
 (** Network stack with sockets. *)
 
 val static_ipv4v6_stack :

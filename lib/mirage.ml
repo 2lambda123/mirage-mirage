@@ -139,8 +139,8 @@ let udp = Udp.udp
 type udpv4v6 = Udp.udpv4v6
 
 let udpv4v6 = Udp.udpv4v6
-let direct_udp = Udp.direct_udp
-let socket_udpv4v6 = Udp.socket_udpv4v6
+
+let udp_impl = Udp.udp_impl
 
 type 'a tcp = 'a Tcp.tcp
 
@@ -149,8 +149,7 @@ let tcp = Tcp.tcp
 type tcpv4v6 = Tcp.tcpv4v6
 
 let tcpv4v6 = Tcp.tcpv4v6
-let direct_tcp = Tcp.direct_tcp
-let socket_tcpv4v6 = Tcp.socket_tcpv4v6
+let tcp_impl = Tcp.tcp_impl
 
 type stackv4v6 = Stack.stackv4v6
 
@@ -291,15 +290,9 @@ let delay_startup =
   let delay_key = Runtime_arg.delay in
   let runtime_args = [ Runtime_arg.v delay_key ] in
   let packages = [ package ~max:"1.0.0" "duration" ] in
-  let connect i _ = function
+  let connect _ _ = function
     | [ delay_key ] ->
-        let modname =
-          match Misc.get_target i with
-          | `Unix | `MacOSX -> "Unix_os.Time"
-          | `Xen | `Qubes -> "Xen_os.Time"
-          | `Virtio | `Hvt | `Spt | `Muen | `Genode -> "Solo5_os.Time"
-        in
-        code ~pos:__POS__ "%s.sleep_ns (Duration.of_sec %s)" modname delay_key
+        code ~pos:__POS__ "%s.sleep_ns (Duration.of_sec %s)" "Mirage_time" delay_key
     | _ -> Misc.connect_err "delay_startup" 1
   in
   impl ~packages ~runtime_args ~connect "Mirage_runtime" delay
@@ -492,12 +485,6 @@ let ( ++ ) acc x =
 
 let register ?(argv = default_argv) ?(reporter = default_reporter ()) ?src name
     jobs =
-  if List.exists Functoria.Impl.app_has_no_arguments jobs then
-    invalid_arg
-      "Your configuration includes a job without arguments. Please add a \
-       dependency in your config.ml: use `let main = Mirage.main \
-       \"Unikernel.hello\" (job @-> job) register \"hello\" [ main $ noop ]` \
-       instead of `.. job .. [ main ]`.";
   let first =
     [ runtime_args argv; backtrace; randomize_hashtables; gc_control ]
   in
